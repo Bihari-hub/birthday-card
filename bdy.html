@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Love Puzzle</title>
+  <style>
+   
+  body {
+    margin: 0;
+    background: rgba(240, 191, 211, 0.95);
+    font-family: 'Segoe UI', sans-serif;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: auto;
+    background-image: url('bg1.jpg'); 
+    transition: background-image 1s ease;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .container, .messageBox, .finalBox {
+    background: rgba(248, 244, 246, 0.95);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    animation: fadeIn 0.8s ease;
+    z-index: 10;
+  }
+
+  .messageBox, .finalBox {
+    display: none;
+  }
+
+  .option-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin: 12px 0;
+    background-color: #f06292;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+  }
+
+  .option-btn:hover {
+    background-color: #ec407a;
+    transform: scale(1.05);
+  }
+
+  .confetti {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    animation: fall 3s infinite;
+    z-index: 5;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(800px); opacity: 0; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .continue-btn {
+    margin-top: 20px;
+    background-color: #e91e63;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  h2 {
+    color: #e91e63;
+    font-size: 1.6em;
+  }
+
+  .floating-text {
+    position: absolute;
+    font-size: 18px;
+    font-weight: bold;
+    color: #f06292;
+    opacity: 0.6;
+    animation: floatUp 10s infinite ease-in-out;
+    pointer-events: none;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(0px); opacity: 0.6; }
+    50% { transform: translateY(-20px); opacity: 0.9; }
+    100% { transform: translateY(0px); opacity: 0.6; }
+  }
+
+  .couple-img {
+    position: absolute;
+    width: 80px;
+    opacity: 0.9;
+    animation: floatSide 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes floatSide {
+    0% { transform: translateX(0px); }
+    50% { transform: translateX(10px); }
+    100% { transform: translateX(0px); }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* 🔥 Responsive Design */
+  @media screen and (max-width: 480px) {
+    body {
+      padding: 10px;
+    }
+
+    .container, .messageBox, .finalBox {
+      padding: 15px;
+      border-radius: 15px;
+    }
+
+    .option-btn, .continue-btn {
+      font-size: 14px;
+      padding: 12px;
+    }
+
+    h2 {
+      font-size: 1.4em;
+    }
+
+    .floating-text {
+      font-size: 14px;
+    }
+
+    .couple-img {
+      width: 60px;
+    }
+  }
+
+  </style>
+</head>
+<body>
+
+<!-- Floating Love Words -->
+<div class="floating-text" style="top: 10%; left: 10%;">Forever</div>
+<div class="floating-text" style="top: 30%; left: 80%;">My Love</div>
+<div class="floating-text" style="top: 60%; left: 15%;">You & Me</div>
+<div class="floating-text" style="top: 80%; left: 70%;">Always</div>
+
+<!-- Puzzle Area -->
+<div class="" id="puzzleBox">
+  <button class="continue-btn" id="startButton" onclick="startPuzzle()">Open Your Surprise Love🎁</button>
+</div>
+
+<!-- Message Display -->
+<div class="messageBox" id="messageBox">
+  <h2>💌 Love Message</h2>
+  <p id="messageText"></p>
+  <button class="continue-btn" onclick="nextPuzzle()">Continue</button>
+</div>
+
+<!-- Gift Intro Message -->
+<div class="finalBox" id="giftIntroBox" style="display: none;">
+  <h2>🎉 It’s time to open your gift!</h2>
+  <p>You’ve completed every puzzle, unlocked every piece of my heart... and now, something special awaits. First open it and then press Next 💝</p>
+  <button class="continue-btn" onclick="showGift()">Next</button>
+</div>
+
+<!-- Gift Box Page -->
+<div class="finalBox" id="giftBox" style="display: none;">
+  <h2>🎁 You’ve Got a Gift!</h2>
+  <img src="giftbox.png" alt="Gift Lamp" style="width: 40%; max-width: 300px; border-radius: 15px; margin: 20px 0;" />
+  <p>This isn’t just a lamp—it’s me sitting beside you during every late-night study. 🌙✨<br/>
+  Whenever you feel tired, just look at it and remember:<br/>
+  <strong>“I’m with you. Study well, my love.”</strong></p>
+  <button class="continue-btn" onclick="showFinalMessage()">Open Birthday Message 🎂</button>
+</div>
+
+<!-- Final Message -->
+<div class="finalBox" id="finalBox" style="display: none;">
+  <h2>🎂 Happy Birthday, My Love!</h2>
+  <img src="bg3.png" alt="Couple Illustration" style="width: 50%; max-width: 400px; border-radius: 20px; margin: 20px 0;" />
+  <p>You’ve unlocked every piece of my heart, my love 💖 Now wear that beautiful smile—it’s your special day, and you deserve all the happiness in the world. Happy Birthday, my forever. 🎉🎂💘</p>
+</div>
+
+<!-- Background Music for Puzzle -->
+<audio id="bgm" preload="auto" loop>
+  <source src="birthday.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Happy Birthday Music -->
+<audio id="happyBdayMusic" preload="auto">
+  <source src="happy-birthday-instrumental.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const puzzles = [
+  {
+    question: "💕 How did I talk to you the very first day?",
+    options: ["Mister", "Lier", "Bro", "nothing"],
+    answer: "Lier",
+    message: "That day, with one simple word, we went from strangers to friends... and from friends to something truly beautiful. From that moment on, talking to you became my favorite part of the day.",
+    background: "bg2.jpg"
+  },
+  {
+    question: "💍 Do you remember the day I said 'yes' to forever?",
+    options: ["Jan 15, 2025", "Jan 13, 2025", "Mar 10, 2025", "Apr 8, 2025"],
+    answer: "Jan 13, 2025",
+    message: "That was the day everything changed. The day I said yes to you—and to a lifetime of love, laughter, and your silly jokes. I’d choose you all over again. 💞",
+    background: "bg2.jpg"
+  },
+  {
+    question: "💕 What do I call you most often?",
+    options: ["Modaya", "Love", "Sweetheart", "Boo"],
+    answer: "Modaya",
+    message: "Even when I call you Modaya, it's my heart’s way of saying 'you're mine.' You're my favorite goofball, and loving you makes every silly moment the best part of my day.",
+    background:"bg2.jpg"
+  },
+  {
+    question: "🎁 What was the very first gift you gave me?",
+    options: ["A Earphone", "A letter", "Pure Love", "Chocolate and flowers"],
+    answer: "Pure Love",
+    message: "No box, no ribbon—just your heart, wide open. That was your first gift to me. And it’s the one that keeps giving, every single day. No one’s ever loved me the way you do… and I’ll never stop being grateful for it. 💞",
+    background: "bg2.jpg"
+  },
+  {
+    question: "💕 Finish this: You're not just my love, you're my ____",
+    options: ["Sunshine", "Peace", "Trouble", "Everything"],
+    answer: "Everything",
+    message: "You’re my laughter, my comfort, my chaos, and calm. You’re my entire universe wrapped in one beautiful soul. 🌌",
+    background: "bg2.jpg"
+  },
+  {
+    question: "💕 What name did I save your contact as? 😌",
+    options: ["Sweetheart", "Happiness", "Peace", "Lover"],
+    answer: "Peace",
+    message: "Because you bring calm to my chaos, light to my dark, and peace to my heart. Just seeing that name makes me smile. 🌿",
+    background: "bg2.jpg"
+  },
+  {
+    question: "💘 What’s your favorite part of me?",
+    options: ["My hair", "My eyes", "My heart", "My voice"],
+    answer: "My eyes",
+    message: "You always say it’s my eyes—the way they speak without words, hold all my emotions, and light up just for you. You call them ‘round and so damn attractive,’ and it makes me fall for you all over again. 👀💖",
+    background: "bg2.jpg"
+  },
+  {
+    question: "💕 What do I always say you remind me of?",
+    options: ["Ranveer Singh", "Danush", "Vijay", "My hero"],
+    answer: "Danush",
+    message: "You’ve got that raw charm, quiet fire, and that soft-boy chaos—just like Danush! But let’s be real… you’re even better, because you’re mine. 💘",
+    background: "bg2.jpg"
+  }
+];
+
+let currentPuzzle = 0;
+let musicPlayed = false;
+
+function startPuzzle() {
+  const bgm = document.getElementById('bgm');
+  bgm.play();
+  musicPlayed = true;
+  document.getElementById('startButton').style.display = 'none';
+  loadPuzzle();
+}
+
+function checkAnswer(index, selected) {
+  if (selected.toLowerCase() === puzzles[currentPuzzle].answer.toLowerCase()) {
+    document.body.style.backgroundImage = `url('${puzzles[currentPuzzle].background}')`;
+    document.getElementById('puzzleBox').style.display = 'none';
+    document.getElementById('messageBox').style.display = 'block';
+    document.getElementById('messageText').textContent = puzzles[currentPuzzle].message;
+    createConfetti();
+  } else {
+    alert("Oops! Try again, sweetheart 💕");
+  }
+}
+
+function nextPuzzle() {
+  document.getElementById('messageBox').style.display = 'none';
+  currentPuzzle++;
+  if (currentPuzzle < puzzles.length) {
+    loadPuzzle();
+  } else {
+    document.getElementById('giftIntroBox').style.display = 'block';
+    document.body.style.backgroundImage = "url('bg2.jpg')";
+  }
+}
+
+function loadPuzzle() {
+  const puzzle = puzzles[currentPuzzle];
+  const container = document.getElementById('puzzleBox');
+  container.innerHTML = `<h2>💘 Puzzle ${currentPuzzle + 1}</h2><p>${puzzle.question}</p>`;
+  puzzle.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => checkAnswer(currentPuzzle, opt);
+    container.appendChild(btn);
+  });
+  container.style.display = 'block';
+}
+
+function createConfetti() {
+  for (let i = 0; i < 30; i++) {
+    const confetti = document.createElement("div");
+    confetti.classList.add("confetti");
+    confetti.style.left = Math.random() * window.innerWidth + "px";
+    confetti.style.top = Math.random() * window.innerHeight + "px";
+    confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+    confetti.style.animationDuration = 2 + Math.random() * 2 + "s";
+    document.body.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 4000);
+  }
+}
+
+function showGift() {
+  document.getElementById('giftIntroBox').style.display = 'none';
+  document.getElementById('giftBox').style.display = 'block';
+  const happyBdayMusic = document.getElementById('happyBdayMusic');
+  happyBdayMusic.play();
+}
+
+function showFinalMessage() {
+  document.getElementById('giftBox').style.display = 'none';
+  document.getElementById('finalBox').style.display = 'block';
+  document.body.style.backgroundImage = "url('bg1.jpg')";
+}
+
+// Start first puzzle
+</script>
+</body>
+</html>
